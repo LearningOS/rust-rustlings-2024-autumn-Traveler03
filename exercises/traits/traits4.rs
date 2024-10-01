@@ -7,8 +7,6 @@
 // Execute `rustlings hint traits4` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
-
 pub trait Licensed {
     fn licensing_info(&self) -> String {
         "some information".to_string()
@@ -23,8 +21,9 @@ impl Licensed for SomeSoftware {}
 impl Licensed for OtherSoftware {}
 
 // YOU MAY ONLY CHANGE THE NEXT LINE
-fn compare_license_types(software: ??, software_two: ??) -> bool {
-    software.licensing_info() == software_two.licensing_info()
+// compare_license_types(software: &dyn Licensed, software_two: &dyn Licensed)也是一种解法 因为特性对象的大小在编译时不确定，而引用可以解决这个问
+fn compare_license_types<T: Licensed, U: Licensed>(software: T, software_two: U) -> bool {
+        software.licensing_info() == software_two.licensing_info()
 }
 
 #[cfg(test)]
