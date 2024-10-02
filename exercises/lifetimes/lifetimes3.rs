@@ -5,11 +5,13 @@
 // Execute `rustlings hint lifetimes3` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
-
-struct Book {
-    author: &str,
-    title: &str,
+/*
+生命周期参数确保Book结构体中的引用在整个结构体实例的生命周期内是有效的。
+例如，如果我们在main函数末尾尝试使用book，编译器将确保name和title在book的生命周期内不会被释放。
+*/
+struct Book<'a> {
+    author: &'a str,
+    title: &'a str,
 }
 
 fn main() {
