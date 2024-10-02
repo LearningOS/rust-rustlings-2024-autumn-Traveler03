@@ -36,8 +36,17 @@ extern "Rust" {
 
 mod Foo {
     // No `extern` equals `extern "Rust"`.
-    fn my_demo_function(a: u32) -> u32 {
+    // 让编译后的符号名和函数名一致 可以被外部代码正确链接
+    #[no_mangle]
+    pub fn my_demo_function(a: u32) -> u32 {
         a
+    }
+
+    #[no_mangle]
+    // 告诉编译器 my_demo_function_alias 是 my_demo_function的别名
+    #[link_name = "my_demo_function"]
+    pub fn my_demo_function_alias(a: u32) -> u32 {
+        my_demo_function(a)
     }
 }
 
@@ -54,8 +63,8 @@ mod tests {
         // SAFETY: We know those functions are aliases of a safe
         // Rust function.
         unsafe {
-            my_demo_function(123);
-            my_demo_function_alias(456);
+            assert_eq!(my_demo_function(123), 123);
+            assert_eq!(my_demo_function_alias(456), 456);
         }
     }
 }
