@@ -27,8 +27,6 @@ enum IntoColorError {
     IntConversion,
 }
 
-// I AM NOT DONE
-
 // Your task is to complete this implementation and return an Ok result of inner
 // type Color. You need to create an implementation for a tuple of three
 // integers, an array of three integers, and a slice of integers.
@@ -37,10 +35,24 @@ enum IntoColorError {
 // time, but the slice implementation needs to check the slice length! Also note
 // that correct RGB color values must be integers in the 0..=255 range.
 
+fn validate_color_component(value: i16) -> Result<u8, IntoColorError> {
+    if value >= 0 && value <= 255 {
+        Ok(value as u8)
+    } else {
+        Err(IntoColorError::IntConversion)
+    }
+}
+
 // Tuple implementation
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = IntoColorError;
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        let (r, g, b) = tuple;
+        Ok(Color {
+            red: validate_color_component(r)?,
+            green: validate_color_component(g)?,
+            blue: validate_color_component(b)?,
+        })
     }
 }
 
@@ -48,15 +60,32 @@ impl TryFrom<(i16, i16, i16)> for Color {
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        let [r, g, b] = arr;
+        Ok(Color {
+            red: validate_color_component(r)?,
+            green: validate_color_component(g)?,
+            blue: validate_color_component(b)?,
+        })
     }
 }
 
 // Slice implementation
+// Slice implementation
 impl TryFrom<&[i16]> for Color {
     type Error = IntoColorError;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if slice.len() != 3 {
+            return Err(IntoColorError::BadLen);
+        }
+        let [r, g, b] = [slice[0], slice[1], slice[2]];
+        Ok(Color {
+            red: validate_color_component(r)?,
+            green: validate_color_component(g)?,
+            blue: validate_color_component(b)?,
+        })
     }
 }
+
 
 fn main() {
     // Use the `try_from` function
